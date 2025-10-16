@@ -26,3 +26,7 @@ cd test && composer install
 Далее запускаем **http.request**
 
 _Хотел ещё запилить автоматическую коллекцию от постмана, но подумал избыточно в рамках указанного ТЗ_
+
+PhpMyAdmin: http://test.local:2308
+
+Project: http://test.local
