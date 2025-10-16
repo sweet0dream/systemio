@@ -1,0 +1,60 @@
+# Services
+services:
+    # Nginx Service
+    nginx:
+        image: nginx:latest
+        container_name: nginx
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - ./conf:/etc/nginx/conf.d
+            - ./www:/var/www/test
+            - ./logs:/var/log/nginx:rw
+        ports:
+            - "127.0.0.1:80:80"
+        networks:
+            default:
+                aliases:
+                    - test.local
+
+    # PHP 8.3 Service
+    php83:
+        image: optimaxeyewear/php:8.3-alpine
+        container_name: php83
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - ~/.composer:/var/www/.composer
+            - ~/.ssh:/var/www/.ssh
+            - ~/.ssh/id_ed25519.pub:/var/www/.ssh/authorized_keys
+            - ./www:/var/www/test
+        environment:
+            PHP_IDE_CONFIG: 'serverName=Docker'
+
+    # MariaDB Service
+    mariadb:
+        image: mariadb:latest
+        container_name: mariadb
+        volumes:
+            - db:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: 123456
+
+    # phpMyAdmin Service
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:latest
+        container_name: pma
+        ports:
+            - "2308:80"
+        environment:
+            PMA_ARBITRARY: 1
+            PMA_HOSTS: mariadb
+            PMA_USER: root
+            PMA_PASSWORD: 123456
+            UPLOAD_LIMIT: 512M
+            MEMORY_LIMIT: 512M
+        depends_on:
+            - mariadb
+
+volumes:
+    db:
